@@ -1,0 +1,15 @@
+a {
+  @apply flex items-center gap-[0.8vw] w-[100%] p-[0.5vw];
+}
+a.active {
+  @apply bg-[#455f99];
+}
+a:hover {
+  @apply bg-[#455f99];
+}
+.profileInput {
+  @apply border-[1.5px] border-[#d9dee8] rounded-[4px] p-[0.5vw] text-[1vw];
+}
+.profileInput:focus {
+  @apply outline-none;
+}

@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@theme {
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+  --animate-blink: blink 2s infinite;
+}
+@theme {
+  --shadow-card: 0 4px 10px rgb(189, 191, 195);
+}
+@theme {
+  --shadow-btn: 0 2px 5px rgb(37, 92, 197);
+}
