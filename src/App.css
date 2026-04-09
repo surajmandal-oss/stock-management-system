@@ -1,5 +1,5 @@
 a {
-  @apply flex items-center gap-[0.8vw] w-[100%] p-[0.5vw];
+  @apply flex items-center gap-[0.8vw] w-[100%] max-[640px]:p-[0.6vw] p-[0.5vw];
 }
 a.active {
   @apply bg-[#455f99];
@@ -8,8 +8,82 @@ a:hover {
   @apply bg-[#455f99];
 }
 .profileInput {
-  @apply border-[1.5px] border-[#d9dee8] rounded-[4px] p-[0.5vw] text-[1vw];
+  @apply border-[1.5px] border-[#d9dee8] rounded-[4px] max-[640px]:p-[1.7vw] p-[0.5vw] max-[640px]:text-[2.3vw] text-[1vw];
 }
 .profileInput:focus {
+  @apply outline-none;
+}
+.pInputStyle {
+  @apply border-[1.5px] border-[#d9dee8] rounded-[4px] max-[640px]:p-[1.7vw] p-[0.5vw] max-[640px]:text-[2.3vw] text-[1vw];
+}
+.pInputStyle:focus {
+  @apply outline-none;
+}
+.productFields {
+  @apply flex flex-col max-[640px]:w-[100%] w-[49%] max-[640px]:gap-[0.5vw] gap-[0.2vw] max-[640px]:text-[2.5vw] text-[1.2vw] text-[#2c3550];
+}
+.productFields > label {
+  @apply font-[500];
+}
+@layer utilities {
+  .pInputStyle.number::-webkit-outer-spin-button,
+  .pInputStyle.number::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .pInputStyle.number {
+    -moz-appearance: textfield;
+  }
+}
+.ProductsData {
+  @apply w-[100%] flex justify-between border-b-[1.5px] border-[#d9dee8] max-[640px]:text-[1.7vw] text-[1vw] px-[1.1vw] max-[640px]:px-[1.7vw] py-[0.4vw] max-[640px]:py-[1.5vw];
+}
+.productsNameData > label {
+  @apply leading-[1.1];
+}
+.proInfo {
+  @apply w-[calc(100%/4)] flex;
+}
+.userRegisterInputFields {
+  @apply flex flex-col max-[640px]:text-[2.5vw] text-[1.05vw] text-[#2c3550];
+}
+.userRegisterInputFields > input {
+  @apply border-[1.5px] border-[#d9dee8] rounded-[4px] max-[640px]:p-[1.7vw] p-[0.5vw] max-[640px]:text-[2.3vw] text-[1vw];
+}
+.userRegisterInputFields > select {
+  @apply border-[1.5px] border-[#d9dee8] rounded-[4px] max-[640px]:p-[1.7vw] p-[0.5vw] max-[640px]:text-[2.3vw] text-[1vw];
+}
+.userRegisterInputFields :focus {
+  @apply outline-none;
+}
+.userLoginInputFields {
+  @apply flex flex-col max-[640px]:text-[2.5vw] text-[1.05vw] text-[#2c3550];
+}
+.userLoginInputFields > input {
+  @apply border-[1.5px] border-[#d9dee8] rounded-[4px] max-[640px]:p-[1.7vw] p-[0.5vw] max-[640px]:text-[2.3vw] text-[1vw];
+}
+.userLoginInputFields :focus {
+  @apply outline-none;
+}
+.editProductFields {
+  @apply flex flex-col max-[640px]:text-[2.5vw] text-[1.05vw] text-[#2c3550];
+}
+.editProductFields > input {
+  @apply border-[1.5px] border-[#d9dee8] rounded-[4px] max-[640px]:p-[1.7vw] p-[0.5vw] max-[640px]:text-[2.3vw] text-[1vw];
+}
+.group {
+  @apply flex justify-between items-center w-[100%];
+}
+@layer utilities {
+  .editProductFields > .number::-webkit-outer-spin-button,
+  .editProductFields > .number::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .editProductFields > .number {
+    -moz-appearance: textfield;
+  }
+}
+.editProductFields :focus {
   @apply outline-none;
 }
