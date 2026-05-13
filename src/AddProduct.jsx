@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-function AddProduct() {
+function AddProduct({ refreshProducts }) {
   const navigate = useNavigate();
   const fileRef = useRef();
   const [message, setMessage] = useState("");
@@ -13,6 +14,8 @@ function AddProduct() {
   const [sellingPrice, setSellingPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [productImage, setProductImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const token = localStorage.getItem("token");
 
   const handleButtonClick = () => {
     fileRef.current.click();
@@ -34,30 +37,47 @@ function AddProduct() {
       setProductImage(null);
       return;
     }
-    const imageURL = URL.createObjectURL(file);
-    setProductImage(imageURL);
+    setProductImage(file);
+    setPreviewImage(URL.createObjectURL(file));
     setMessage("");
   };
 
   const addNewProduct = async (e) => {
     e.preventDefault();
-    const url = "http://10.198.199.54:3000/stocks";
-    let response = await fetch(url, {
-      method: "Post",
-      body: JSON.stringify({
-        productName,
-        SKU,
-        category,
-        price,
-        sellingPrice,
-        quantity,
-        productImage,
-      }),
-    });
-    response = await response.json();
-    if (response) {
-      alert("New Product Added");
-      navigate("/viewProducts");
+
+    try {
+      const formData = new FormData();
+
+      formData.append("productName", productName);
+      formData.append("SKU", SKU);
+      formData.append("category", category);
+      formData.append("price", price);
+      formData.append("sellingPrice", sellingPrice);
+      formData.append("quantity", quantity);
+
+      formData.append("productImage", productImage);
+
+      const response = await fetch("http://localhost:5000/api/products/add", {
+        method: "POST",
+        body: formData,
+        headers: {
+          authorization: token,
+        },
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (data.success) {
+        alert("Product Added Successfully");
+
+        await refreshProducts();
+
+        navigate("/viewProducts");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -171,7 +191,7 @@ function AddProduct() {
                     {productImage ? (
                       <img
                         className="w-full h-full object-fill"
-                        src={productImage}
+                        src={previewImage}
                         alt=""
                       />
                     ) : (
@@ -205,7 +225,7 @@ function AddProduct() {
                         type="file"
                         name=""
                         id=""
-                        accept="image/*"
+                        accept=".jpg,.jpeg,.png,.gif"
                         onChange={handleImageChange}
                       />
                     </div>
@@ -223,7 +243,7 @@ function AddProduct() {
                 Add Product
               </button>
               <button
-                type="reset"
+                type="button"
                 onClick={() => navigate("/dashboard")}
                 className="py-[0.8vw] sm:py-[0.3vw] px-[3.5vw] sm:px-[2.5vw] bg-[#2d6deb] border-[1.5px] border-[#255cc5] rounded cursor-pointer"
               >

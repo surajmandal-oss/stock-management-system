@@ -1,13 +1,50 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function UserLogin({ loginTrue }) {
   const navigate = useNavigate();
-  const onSubmitForm = (e) => {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const token = localStorage.getItem("token");
+
+  const onSubmitForm = async (e) => {
     e.preventDefault();
 
-    localStorage.setItem("isLoggedIn", "true");
-    loginTrue(true);
-    navigate("/dashboard");
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (data.success) {
+        localStorage.setItem("isLoggedIn", "true");
+
+        localStorage.setItem("token", data.token);
+
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        loginTrue(true);
+
+        navigate("/dashboard");
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="mainUserLoginContainer w-[100%] flex flex-col items-center gap-[1vw] sm:gap-[0.5vw]">
@@ -30,6 +67,7 @@ function UserLogin({ loginTrue }) {
               name=""
               id="loginUserEmail"
               placeholder="Enter Email Address"
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -40,11 +78,16 @@ function UserLogin({ loginTrue }) {
               name=""
               id="loginUserPassword"
               placeholder="Enter Password"
+              onChange={(e) => setPassword(e.target.value)}
+              maxLength={8}
               required
             />
           </div>
           <div className="forgotPassword w-[100%] flex justify-end">
-            <p className="text-[2.6vw] sm:text-[0.9vw] text-[#2d6deb] cursor-pointer">
+            <p
+              className="text-[2.6vw] sm:text-[0.9vw] text-[#2d6deb] cursor-pointer"
+              onClick={() => navigate("/forgotPassword")}
+            >
               Forgot Password?
             </p>
           </div>
@@ -62,7 +105,13 @@ function UserLogin({ loginTrue }) {
         <p>Not yet registered?</p>
         <p
           className="text-[2.6vw] sm:text-[1.1vw] text-[#2d6deb] cursor-pointer"
-          onClick={() => navigate("/")}
+          onClick={() => {
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            loginTrue(false);
+            navigate("/");
+          }}
         >
           Register
         </p>

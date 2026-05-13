@@ -3,8 +3,18 @@ import { useNavigate } from "react-router-dom";
 function Logout({ logoutTrue }) {
   const navigate = useNavigate();
   const onLogout = () => {
+    // Remove login status
     localStorage.removeItem("isLoggedIn");
+
+    // Remove JWT token
+    localStorage.removeItem("token");
+
+    // Remove logged user data
+    localStorage.removeItem("user");
+
+    // State false
     logoutTrue(false);
+
     navigate("/login");
   };
   return (

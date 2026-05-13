@@ -4,9 +4,12 @@ import { RxCross2 } from "react-icons/rx";
 import { useNavigate } from "react-router";
 function HeadBar({ userLogin, sendData, sendMenu }) {
   const navigate = useNavigate();
+
   const changValue = () => {
     sendData(!sendMenu);
   };
+
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
     <div className="headContainer flex flex-col sm:flex-row sm:justify-between sm:items-center w-[100%] sm:h-[50px] h-[100px] overflow-y-hidden border-b-[1.5px] border-[#d9dee8]">
       <div className="navLeft w-[100%] sm:w-[20%] bg-[#29417b] text-[#ffffff] sm:h-[100%] flex sm:justify-center sm:items-center max-[640px]:h-[50px]">
@@ -35,10 +38,10 @@ function HeadBar({ userLogin, sendData, sendMenu }) {
           <div className="sm:flex gap-[25px]">
             <div className="adminInfo flex text-[1.1vw] gap-[0.5vw] max-[640px]:text-[2.6vw]">
               <div className="wal">Welcome,</div>
-              <div className="adminName font-[600]">Suraj</div>
+              <div className="adminName font-[600]">{user?.fullName}</div>
             </div>
             <div className="adminEmail text-[1.1vw] text-[#3f3e3e] max-[640px]:text-[2.3vw]">
-              suraj@example.com
+              {user?.email}
             </div>
           </div>
           <div

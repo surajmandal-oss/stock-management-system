@@ -1,10 +1,77 @@
 import { useRef, useState } from "react";
+import { RiDeleteBinLine } from "react-icons/ri";
 
-function StockUpdate({ productData }) {
+function StockUpdate({ productData, setProductData }) {
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [proImg, setProImg] = useState(null);
   const [message, setMessage] = useState("");
   const fileRef = useRef();
+  const [proIMG, setProImg] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const token = localStorage.getItem("token");
+
+  const updateQuantityData = async (item) => {
+    try {
+      const url = `http://localhost:5000/api/products/update/${item._id}`;
+
+      let response = await fetch(url, {
+        method: "PUT",
+
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+
+        body: JSON.stringify({
+          quantity: item.quantity,
+        }),
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (data.success) {
+        alert("Product Quantity Updated Successfully");
+
+        const updated = productData.map((p) =>
+          p._id === item._id
+            ? {
+                ...p,
+                originalQuantity: item.quantity,
+                isChanged: false,
+              }
+            : p,
+        );
+        setProductData(updated);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // DIsabled save changes button until the current quentity is change
+  const handleQuantityChange = (e, index) => {
+    const updated = [...productData];
+    const value = e.target.value;
+
+    if (value === "") {
+      updated[index].quantity = "";
+      updated[index].isChanged = false; // disable button
+      setProductData(updated);
+      return;
+    }
+
+    const numValue = Number(value);
+
+    // NaN / negative reject
+    if (isNaN(numValue) || numValue < 0) return;
+
+    updated[index].quantity = numValue;
+
+    updated[index].isChanged = numValue !== updated[index].originalQuantity;
+
+    setProductData(updated);
+  };
 
   const handleUpdate = (item) => {
     setSelectedProduct(item);
@@ -14,27 +81,129 @@ function StockUpdate({ productData }) {
   const handleGetImage = () => {
     fileRef.current.click();
   };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+
     if (!file) return;
+
     if (file.size > 5 * 1024 * 1024) {
       setMessage("Image size must be less than 5MB.");
-      setProImg(null);
       return;
     }
+
     if (
       !["image/jpeg", "image/png", "image/jpg", "image/gif"].includes(file.type)
     ) {
-      setMessage(
-        "Invalid file type. Please upload JPEG, JPG, PNG, and GIF image are allowed.",
-      );
-      setProImg(null);
+      setMessage("Invalid image type");
       return;
     }
-    const imageURL = URL.createObjectURL(file);
-    setProImg(imageURL);
+
+    const previewURL = URL.createObjectURL(file);
+
+    setProImg(previewURL);
+
+    setImageFile(file);
+
+    setSelectedProduct({
+      ...selectedProduct,
+      imageFile: file,
+    });
+
     setMessage("");
   };
+
+  const updateAllData = async () => {
+    try {
+      const url = `http://localhost:5000/api/products/update/${selectedProduct._id}`;
+
+      const formData = new FormData();
+
+      formData.append("productName", selectedProduct.productName);
+
+      formData.append("SKU", selectedProduct.SKU);
+
+      formData.append("category", selectedProduct.category);
+
+      formData.append("price", selectedProduct.price);
+
+      formData.append("sellingPrice", selectedProduct.sellingPrice);
+
+      formData.append("quantity", selectedProduct.quantity);
+
+      // New image send karo
+      if (imageFile) {
+        formData.append("productImage", imageFile);
+      }
+
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          authorization: token,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (data.success) {
+        alert("Product Updated Successfully");
+
+        const updated = productData.map((item) =>
+          item._id === selectedProduct._id ? data.product : item,
+        );
+
+        setProductData(updated);
+
+        setSelectedProduct(null);
+
+        setImageFile(null);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Delete product Logic
+  const deleteProduct = async (id) => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this product?",
+      );
+      if (!confirmDelete) return;
+
+      console.log("Deleting product id:", id);
+
+      const response = await fetch(
+        `http://localhost:5000/api/products/delete/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: token,
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      console.log("Delete response:", data);
+
+      if (data.success) {
+        alert("Product deleted successfully");
+
+        const updated = productData.filter((item) => item._id !== id);
+        setProductData(updated);
+      } else {
+        alert(data.message || "Delete failed");
+      }
+    } catch (error) {
+      console.log("Delete error:", error);
+    }
+  };
+
   return (
     <div className="mainStockUpdateContainer flex flex-col gap-[1vw]">
       {/*  */}
@@ -46,14 +215,27 @@ function StockUpdate({ productData }) {
             <div className="editProductHeading text-[3.5vw] text-[#2c3550] sm:text-[1.5vw] font-[500]">
               Edit Product
             </div>
-            <form action="" className="flex flex-col gap-[0.5vw]">
+            <form
+              action=""
+              className="flex flex-col gap-[0.5vw]"
+              onSubmit={(e) => {
+                e.preventDefault();
+                updateAllData();
+              }}
+            >
               <div className="editProductFields">
                 <label htmlFor="proName">Product Name:</label>
                 <input
                   type="text"
                   name=""
                   id="proName"
-                  defaultValue={selectedProduct.productName}
+                  value={selectedProduct.productName}
+                  onChange={(e) =>
+                    setSelectedProduct({
+                      ...selectedProduct,
+                      productName: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="group">
@@ -63,7 +245,13 @@ function StockUpdate({ productData }) {
                     type="text"
                     name=""
                     id="proSKU"
-                    defaultValue={selectedProduct.SKU}
+                    value={selectedProduct.SKU}
+                    onChange={(e) =>
+                      setSelectedProduct({
+                        ...selectedProduct,
+                        SKU: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div className="editProductFields w-[49%]">
@@ -72,6 +260,12 @@ function StockUpdate({ productData }) {
                     name=""
                     id="proCategory"
                     className=" border-[1.5px] border-[#d9dee8] rounded-[4px] max-[640px]:p-[1.7vw] p-[0.5vw] max-[640px]:text-[2.3vw] text-[1vw]"
+                    onChange={(e) =>
+                      setSelectedProduct({
+                        ...selectedProduct,
+                        category: e.target.value,
+                      })
+                    }
                   >
                     <option value={selectedProduct.category}>
                       {selectedProduct.category}
@@ -106,7 +300,13 @@ function StockUpdate({ productData }) {
                     name=""
                     id="proPrice"
                     className="number"
-                    defaultValue={selectedProduct.price}
+                    value={selectedProduct.price}
+                    onChange={(e) =>
+                      setSelectedProduct({
+                        ...selectedProduct,
+                        price: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div className="editProductFields w-[49%]">
@@ -116,7 +316,13 @@ function StockUpdate({ productData }) {
                     name=""
                     id="proSellingPrice"
                     className="number"
-                    defaultValue={selectedProduct.sellingPrice}
+                    value={selectedProduct.sellingPrice}
+                    onChange={(e) =>
+                      setSelectedProduct({
+                        ...selectedProduct,
+                        sellingPrice: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -125,7 +331,7 @@ function StockUpdate({ productData }) {
                   <div className="wrapper w-[25%] sm:w-[17%]">
                     <label htmlFor="">Product Image:</label>
                     <div className="proIMG w-[80%] min-h-[10vw] sm:min-h-[5vw]">
-                      <img className="w-full" src={proImg} alt="" />
+                      <img className="w-full" src={proIMG} alt="" />
                     </div>
                   </div>
                   <div className="uploadImgBTN">
@@ -199,7 +405,7 @@ function StockUpdate({ productData }) {
           <div className="max-h-[130vw] sm:max-h-[27vw] overflow-y-auto">
             {productData.map((item, index) => (
               <div
-                key={index}
+                key={item._id}
                 className="allStockUpdateData  w-[100%] flex justify-between border-b-[1.5px] border-[#d9dee8] text-[1.7vw] sm:text-[1vw] text-[#232426] sm:px-[1.1vw] px-[1.7vw] sm:py-[0.5vw] py-[1.5vw]"
               >
                 <div className="proInfo justify-start items-center gap-[0.3vw]">
@@ -211,7 +417,9 @@ function StockUpdate({ productData }) {
                   </div>
                 </div>
                 <div className="proInfo justify-center items-center">
-                  <div className="proSKU">{item.SKU + "-" + item.id}</div>
+                  <div className="proSKU">
+                    {item.SKU + "-" + item._id.slice(-5)}
+                  </div>
                 </div>
                 <div className="proInfo justify-center items-center">
                   <div className="proQuantity">
@@ -221,13 +429,23 @@ function StockUpdate({ productData }) {
                       name=""
                       id=""
                       min="0"
-                      defaultValue={item.quantity}
+                      value={item.quantity}
+                      onChange={(event) => handleQuantityChange(event, index)}
                     />
                   </div>
                 </div>
                 <div className="proInfo justify-end items-center">
                   <div className="proUpdateStock sm:text-[0.9vw] text-[#ffffff] flex items-center justify-center gap-[0.5vw] sm:gap-[1vw]">
-                    <button className="bg-[#2d6deb]  border-[1.5px] border-[#255cc5] rounded px-[0.3vw] py-[0.5vw] sm:py-[0.15vw]">
+                    <button
+                      disabled={!item.isChanged}
+                      className={`rounded px-[0.3vw] py-[0.5vw] sm:py-[0.15vw] border-[1.5px]
+  ${
+    item.isChanged
+      ? "bg-[#2d6deb] border-[#255cc5] cursor-pointer text-white"
+      : "bg-gray-400 border-gray-400 cursor-not-allowed text-white"
+  }`}
+                      onClick={() => updateQuantityData(item)}
+                    >
                       Save Changes
                     </button>
                     <button
@@ -236,6 +454,12 @@ function StockUpdate({ productData }) {
                     >
                       Update
                     </button>
+                    <div className="deleteProduct">
+                      <RiDeleteBinLine
+                        className="text-lg text-[#ff0000] cursor-pointer"
+                        onClick={() => deleteProduct(item._id)}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

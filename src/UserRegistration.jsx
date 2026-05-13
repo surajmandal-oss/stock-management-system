@@ -1,7 +1,48 @@
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function UserRegistration() {
   const navigate = useNavigate();
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const token = localStorage.getItem("token");
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch("http://localhost:5000/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: token,
+      },
+
+      body: JSON.stringify({
+        fullName,
+        email,
+        mobileNumber,
+        password,
+        role,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert("Registration Successful");
+
+      navigate("/login");
+    } else {
+      alert(data.message);
+    }
+  };
+
   return (
     <div className="mainUserRegistrationContainer w-[100%] flex flex-col items-center gap-[1vw] sm:gap-[0.5vw]">
       <div className="UserImg w-[25%] sm:w-[10%]">
@@ -14,7 +55,7 @@ function UserRegistration() {
         <form
           className="flex flex-col gap-[1vw] sm:gap-[0.4vw]"
           action=""
-          onSubmit={() => navigate("/login")}
+          onSubmit={handleRegister}
         >
           <div className="userRegisterInputFields">
             <label htmlFor="fullUserName">Full Name:</label>
@@ -23,6 +64,7 @@ function UserRegistration() {
               name=""
               id="fullUserName"
               placeholder="Enter Full Name"
+              onChange={(e) => setFullName(e.target.value)}
               required
             />
           </div>
@@ -33,6 +75,7 @@ function UserRegistration() {
               name=""
               id="emailAddress"
               placeholder="Enter Email Address"
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -43,6 +86,11 @@ function UserRegistration() {
               name=""
               id="mobileNumber"
               placeholder="Enter Mobile Number"
+              onChange={(e) => setMobileNumber(e.target.value)}
+              pattern="[0-9]{10}"
+              minLength="10"
+              maxLength="10"
+              title="Please enter valid phone number"
               required
             />
           </div>
@@ -50,17 +98,41 @@ function UserRegistration() {
           <div className="flex justify-between w-[100%]">
             <div className="userRegisterInputFields w-[calc(100%-52%)]">
               <label htmlFor="password">Password:</label>
-              <input
-                type="password"
-                name=""
-                id="password"
-                placeholder="Enter Password"
-                required
-              />
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name=""
+                  id="password"
+                  placeholder="Enter Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$"
+                  title="Password must be exactly 8 characters with uppercase, lowercase, number and special character"
+                  minLength={8}
+                  maxLength={8}
+                  required
+                  className="w-full pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
+                  ) : (
+                    <Eye className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
+                  )}
+                </button>
+              </div>
             </div>
             <div className="userRegisterInputFields w-[calc(100%-52%)]">
               <label htmlFor="">Role:</label>
-              <select required name="" id="">
+              <select
+                required
+                name=""
+                id=""
+                onChange={(e) => setRole(e.target.value)}
+              >
                 <option value="">Select Role</option>
                 <option value="customer">Customer</option>
                 <option value="admin">Admin</option>

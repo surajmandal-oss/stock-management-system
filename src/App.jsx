@@ -11,6 +11,11 @@ import Logout from "./Logout";
 import { Suspense, useEffect, useState } from "react";
 import UserRegistration from "./UserRegistration";
 import UserLogin from "./UserLogin";
+import ProtectedRoute from "./ProtectedRoute";
+import ForgotPassword from "./ForgotPassword";
+import VerifyOTP from "./VerifyOTP";
+import ResetPassword from "./ResetPassword";
+import PasswordResetSuccess from "./PasswordResetSuccess";
 
 function App() {
   const [productData, setProductData] = useState([]);
@@ -33,6 +38,10 @@ function App() {
       }
     };
     window.addEventListener("resize", screenSize);
+
+    return () => {
+      window.removeEventListener("resize", screenSize);
+    };
   }, []);
 
   useEffect(() => {
@@ -44,11 +53,24 @@ function App() {
     }
   }, []);
   const getProductData = async () => {
-    const url = "http://10.198.199.54:3000/stocks";
-    let response = await fetch(url);
-    response = await response.json();
-    setProductData(response);
-    setLoading(false);
+    try {
+      const url = "http://localhost:5000/api/products";
+
+      const token = localStorage.getItem("token");
+      let response = await fetch(url, {
+        headers: {
+          authorization: token,
+        },
+      });
+      let data = await response.json();
+
+      console.log(data);
+
+      setProductData(data.products);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
   const getLogoutTrue = (value) => {
     setUserLogin(value);
@@ -68,7 +90,7 @@ function App() {
             {userLogin && <SideNavbar />}
           </div>
           {width && menu && <SideNavbar sendData={handleMenuVal} />}
-          {menu == false ? (
+          {menu === false ? (
             <div className="rightContent w-[100%] sm:w-[80%] p-[1.5vw]">
               <Suspense fallback={<h2>Loading...</h2>}>
                 <Routes>
@@ -78,79 +100,83 @@ function App() {
                       userLogin ? (
                         <Navigate to="/dashboard" />
                       ) : (
-                        <UserRegistration />
+                        <UserRegistration loginTrue={setUserLogin} />
                       )
                     }
                   />
                   <Route
                     path="/login"
-                    element={<UserLogin loginTrue={setUserLogin} />}
+                    element={
+                      userLogin ? (
+                        <Navigate to="/dashboard" />
+                      ) : (
+                        <UserLogin loginTrue={setUserLogin} />
+                      )
+                    }
                   />
                   <Route
                     path="/dashboard"
                     element={
-                      userLogin ? (
+                      <ProtectedRoute>
                         <Dashboard
                           productData={productData}
                           loading={loading}
                         />
-                      ) : (
-                        <UserLogin loginTrue={setUserLogin} />
-                      )
+                      </ProtectedRoute>
                     }
                   />
                   <Route
                     path="/addProduct"
                     element={
-                      userLogin ? (
-                        <AddProduct />
-                      ) : (
-                        <UserLogin loginTrue={setUserLogin} />
-                      )
+                      <ProtectedRoute>
+                        <AddProduct refreshProducts={getProductData} />
+                      </ProtectedRoute>
                     }
                   />
                   <Route
                     path="/viewProducts"
                     element={
-                      userLogin ? (
+                      <ProtectedRoute>
                         <ViewProducts
                           productData={productData}
                           loading={loading}
                         />
-                      ) : (
-                        <UserLogin loginTrue={setUserLogin} />
-                      )
+                      </ProtectedRoute>
                     }
                   />
                   <Route
                     path="/stockUpdate"
                     element={
-                      userLogin ? (
-                        <StockUpdate productData={productData} />
-                      ) : (
-                        <UserLogin loginTrue={setUserLogin} />
-                      )
+                      <ProtectedRoute>
+                        <StockUpdate
+                          productData={productData}
+                          setProductData={setProductData}
+                        />
+                      </ProtectedRoute>
                     }
                   />
                   <Route
                     path="/profile"
                     element={
-                      userLogin ? (
+                      <ProtectedRoute>
                         <Profile />
-                      ) : (
-                        <UserLogin loginTrue={setUserLogin} />
-                      )
+                      </ProtectedRoute>
                     }
                   />
                   <Route
                     path="/logout"
                     element={
-                      userLogin ? (
+                      <ProtectedRoute>
                         <Logout logoutTrue={getLogoutTrue} />
-                      ) : (
-                        <UserLogin loginTrue={setUserLogin} />
-                      )
+                      </ProtectedRoute>
                     }
+                  />
+                  <Route path="/forgotPassword" element={<ForgotPassword />} />
+                  <Route path="/verifyOTP" element={<VerifyOTP />} />
+                  <Route path="/resetPassword" element={<ResetPassword />} />
+                  <Route
+                    path="/passwordResetSuccess"
+                    element={<PasswordResetSuccess />}
                   />
                 </Routes>
               </Suspense>

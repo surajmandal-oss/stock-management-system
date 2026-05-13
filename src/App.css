@@ -50,6 +50,9 @@ a:hover {
 .userRegisterInputFields > input {
   @apply border-[1.5px] border-[#d9dee8] rounded-[4px] max-[640px]:p-[1.7vw] p-[0.5vw] max-[640px]:text-[2.3vw] text-[1vw];
 }
+.userRegisterInputFields > div > input {
+  @apply border-[1.5px] border-[#d9dee8] rounded-[4px] max-[640px]:p-[1.7vw] p-[0.5vw] max-[640px]:text-[2.3vw] text-[1vw];
+}
 .userRegisterInputFields > select {
   @apply border-[1.5px] border-[#d9dee8] rounded-[4px] max-[640px]:p-[1.7vw] p-[0.5vw] max-[640px]:text-[2.3vw] text-[1vw];
 }

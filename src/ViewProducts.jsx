@@ -58,7 +58,7 @@ function ViewProducts({ productData, loading }) {
                     <label htmlFor="">{item.productName}</label>
                   </div>
                   <div className="productsSKUData w-[calc(100%/7)] flex justify-center items-center">
-                    {item.SKU + "-" + item.id}
+                    {item.SKU + "-" + item._id.slice(-5)}
                   </div>
                   <div className="productsCategoryData w-[calc(100%/7)] flex justify-center items-center">
                     {item.category}
