@@ -17,12 +17,15 @@ function Profile() {
   // Get profile data from database
   const getProfile = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/profile", {
-        method: "GET",
-        headers: {
-          authorization: token,
+      const response = await fetch(
+        "https://stock-management-system-backend-7g2f.onrender.com/api/auth/profile",
+        {
+          method: "GET",
+          headers: {
+            authorization: token,
+          },
         },
-      });
+      );
 
       const data = await response.json();
 
@@ -45,7 +48,7 @@ function Profile() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/profile/update",
+        "https://stock-management-system-backend-7g2f.onrender.com/api/auth/profile/update",
         {
           method: "PUT",
           headers: {

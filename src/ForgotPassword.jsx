@@ -16,7 +16,7 @@ const ForgotPassword = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/users/forgot-password",
+        "https://stock-management-system-backend-7g2f.onrender.com/api/users/forgot-password",
         {
           method: "POST",
 

@@ -16,21 +16,24 @@ function UserRegistration() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:5000/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: token,
-      },
+    const response = await fetch(
+      "https://stock-management-system-backend-7g2f.onrender.com/api/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
 
-      body: JSON.stringify({
-        fullName,
-        email,
-        mobileNumber,
-        password,
-        role,
-      }),
-    });
+        body: JSON.stringify({
+          fullName,
+          email,
+          mobileNumber,
+          password,
+          role,
+        }),
+      },
+    );
 
     const data = await response.json();
 

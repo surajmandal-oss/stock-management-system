@@ -33,7 +33,7 @@ const ResetPassword = () => {
       const email = localStorage.getItem("resetEmail");
 
       const response = await fetch(
-        "http://localhost:5000/api/users/reset-password",
+        "https://stock-management-system-backend-7g2f.onrender.com/api/users/reset-password",
         {
           method: "POST",
 

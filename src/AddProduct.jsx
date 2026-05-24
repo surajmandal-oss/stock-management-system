@@ -57,13 +57,16 @@ function AddProduct({ refreshProducts }) {
 
       formData.append("productImage", productImage);
 
-      const response = await fetch("http://localhost:5000/api/products/add", {
-        method: "POST",
-        body: formData,
-        headers: {
-          authorization: token,
+      const response = await fetch(
+        "https://stock-management-system-backend-7g2f.onrender.com/api/products/add",
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            authorization: token,
+          },
         },
-      });
+      );
 
       const data = await response.json();
 

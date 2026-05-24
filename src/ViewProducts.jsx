@@ -61,7 +61,8 @@ function ViewProducts({ productData, loading }) {
                     {item.SKU + "-" + item._id.slice(-5)}
                   </div>
                   <div className="productsCategoryData w-[calc(100%/7)] flex justify-center items-center">
-                    {item.category}
+                    {item.category.charAt(0).toUpperCase() +
+                      item.category.slice(1)}
                   </div>
                   <div className="productsPriceData w-[calc(100%/7)] flex justify-center items-center">
                     {item.price}

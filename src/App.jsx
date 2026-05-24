@@ -54,7 +54,8 @@ function App() {
   }, []);
   const getProductData = async () => {
     try {
-      const url = "http://localhost:5000/api/products";
+      const url =
+        "https://stock-management-system-backend-7g2f.onrender.com/api/products";
 
       const token = localStorage.getItem("token");
       let response = await fetch(url, {

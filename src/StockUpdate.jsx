@@ -11,7 +11,7 @@ function StockUpdate({ productData, setProductData }) {
 
   const updateQuantityData = async (item) => {
     try {
-      const url = `http://localhost:5000/api/products/update/${item._id}`;
+      const url = `https://stock-management-system-backend-7g2f.onrender.com/api/products/update/${item._id}`;
 
       let response = await fetch(url, {
         method: "PUT",
@@ -115,7 +115,7 @@ function StockUpdate({ productData, setProductData }) {
 
   const updateAllData = async () => {
     try {
-      const url = `http://localhost:5000/api/products/update/${selectedProduct._id}`;
+      const url = `https://stock-management-system-backend-7g2f.onrender.com/api/products/update/${selectedProduct._id}`;
 
       const formData = new FormData();
 
@@ -177,7 +177,7 @@ function StockUpdate({ productData, setProductData }) {
       console.log("Deleting product id:", id);
 
       const response = await fetch(
-        `http://localhost:5000/api/products/delete/${id}`,
+        `https://stock-management-system-backend-7g2f.onrender.com/api/products/delete/${id}`,
         {
           method: "DELETE",
           headers: {

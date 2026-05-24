@@ -12,18 +12,21 @@ function UserLogin({ loginTrue }) {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: token,
-        },
+      const response = await fetch(
+        "https://stock-management-system-backend-7g2f.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: token,
+          },
 
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        },
+      );
 
       const data = await response.json();
 
