@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import defaultUploadImage from "./src/assets/upload-image.png";
+import defaultUploadImage from "../src/assets/upload-image.png";
 
 function AddProduct({ refreshProducts }) {
   const navigate = useNavigate();
