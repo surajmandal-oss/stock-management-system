@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import defaultUploadImage from "../assets/upload-image.png";
 
 function AddProduct({ refreshProducts }) {
   const navigate = useNavigate();
@@ -200,7 +201,7 @@ function AddProduct({ refreshProducts }) {
                     ) : (
                       <img
                         className="h-[100%]"
-                        src="./src/assets/upload-image.png"
+                        src={defaultUploadImage}
                         alt=""
                       />
                     )}
