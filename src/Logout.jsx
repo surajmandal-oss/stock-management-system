@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import lockImage from "../src/assets/lock_image.png";
 
 function Logout({ logoutTrue }) {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ function Logout({ logoutTrue }) {
         <div className="logoutContainer  flex flex-col justify-center items-center gap-[1.3vw] bg-[#ffffff] rounded shadow-card">
           <div className="lockImage w-[45%] sm:w-[27%] bg-cover">
             <img
-              src="./src/assets/lock_image.png"
+              src={lockImage}
               alt="lock-image"
               className="w-[100%]"
             />
