@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import profileImage from "../src/assets/profile-image.png";
 
 function Profile() {
   const navigate = useNavigate();
@@ -88,7 +89,7 @@ function Profile() {
         <div className="profileData flex flex-col sm:flex-row bg-[#ffffff] border-[1.5px] border-[#d9dee8] rounded overflow-hidden shadow-card">
           <div className="profileLeftContainer w-[100%] sm:w-[40%] flex justify-center items-center sm:border-r-[1.5px] sm:border-[#d9dee8]">
             <div className="profileImage max-[640px]:w-[40%]">
-              <img src="./src/assets/profile-image.png" alt="profile-image" />
+              <img src={profileImage} alt="profile-image" />
             </div>
           </div>
           <div className="profileRightContainer w-[100%] sm:w-[60%] text-[2.5vw] sm:text-[1.2vw] text-[#2c3550]">
