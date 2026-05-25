@@ -53,7 +53,7 @@ function ViewProducts({ productData, loading }) {
                 <div className="ProductsData">
                   <div className="productsNameData w-[calc(100%/7)] flex items-center gap-[0.3vw]">
                     <div className="proImage w-[35%] hidden sm:block">
-                      <img className="w-full" src={`https://stock-management-system-backend-7g2f.onrender.com/${item.productImage}`} alt="" />
+                      <img className="w-full" src={`https://stock-management-system-backend-7g2f.onrender.com${item.productImage}`} alt="" />
                     </div>
                     <label htmlFor="">{item.productName}</label>
                   </div>
