@@ -75,7 +75,7 @@ function StockUpdate({ productData, setProductData }) {
 
   const handleUpdate = (item) => {
     setSelectedProduct(item);
-    setProImg(item.productImage);
+    setProImg(`https://stock-management-system-backend-7g2f.onrender.com${item.productImage}`);
   };
 
   const handleGetImage = () => {
