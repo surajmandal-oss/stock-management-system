@@ -410,7 +410,7 @@ function StockUpdate({ productData, setProductData }) {
               >
                 <div className="proInfo justify-start items-center gap-[0.3vw]">
                   <div className="proImg w-[15%]">
-                    <img className="w-full" src={item.productImage} alt="" />
+                    <img className="w-full" src={`https://stock-management-system-backend-7g2f.onrender.com${item.productImage}`} alt="" />
                   </div>
                   <div className="proName leading-[1.1]">
                     {item.productName}
